@@ -1,0 +1,41 @@
+
+import heapq
+
+start = (1,2,3,4,0,6,7,5,8)
+goal = (1,2,3,4,5,6,7,8,0)
+
+def h(s):
+    return sum(s[i] != goal[i] and s[i] != 0 for i in range(9))
+
+def moves(s):
+    p = s.index(0)
+
+    for q in [p-3,p+3,p-1,p+1]:
+        if 0 <= q < 9 and abs(p//3-q//3) <= 1:
+            t = list(s)
+            t[p], t[q] = t[q], t[p]
+            yield tuple(t)
+
+def astar():
+    pq = [(h(start), 0, start)]
+    visited = set()
+
+    while pq:
+        f, g, s = heapq.heappop(pq)
+
+        if s in visited:
+            continue
+
+        visited.add(s)
+
+        print(*s, sep=",")
+
+        if s == goal:
+            print("Goal is reached")
+            return
+
+        for n in moves(s):
+            if n not in visited:
+                heapq.heappush(pq, (g+1+h(n), g+1, n))
+
+astar()
